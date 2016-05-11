@@ -345,11 +345,6 @@ class AsCons s t u v a b where
   type AsConsConstraint s t u v a b = TraversalConstraint 
 
   _AsCons' :: AsConsConstraint s t u v a b p f => Optic p f s t (a, u) (b, v)
-{-
-  _AsConsIsTraversal :: proxy s t a b -> Dict (AsConsConstraint s t a b :< TraversalConstraint)
-  default _AsConsIsTraversal :: (AsConsConstraint s t a b ~ TraversalConstraint) => proxy s t a b -> Dict (AsConsConstraint s t a b :< TraversalConstraint)
-  _AsConsIsTraversal _ = Dict
--}
 
 instance AsCons [a] [b] [a] [b] a b where
   type AsConsConstraint [a] [b] [a] [b] a b = PrismConstraint
@@ -365,4 +360,3 @@ instance AsCons (NonEmptyList a) (NonEmptyList b) [a] [b] a b where
     lens
       (\(NonEmptyList h t) -> (h, t))
       (\_ (h, t) -> NonEmptyList h t)
-      
