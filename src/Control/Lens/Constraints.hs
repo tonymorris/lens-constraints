@@ -321,7 +321,6 @@ class AsArithException t where
 
   _AsArithException' :: AsArithExceptionConstraint t p f => Optic' p f t ArithException
 
-
   _AsArithExceptionIsPrism :: proxy t -> Dict (AsArithExceptionConstraint t :< PrismConstraint)
   default _AsArithExceptionIsPrism :: (AsArithExceptionConstraint t ~ PrismConstraint) => proxy t -> Dict (AsArithExceptionConstraint t :< PrismConstraint)
   _AsArithExceptionIsPrism _ = Dict
@@ -340,5 +339,30 @@ instance AsArithException ArithException where
 instance AsArithException SomeException where
   _AsArithException' = exception
 
-classdd Conz s t a b | s -> a, t -> b, s b -> t, t a -> s where
-  _Conz :: Prism s t (a, s) (b, t)
+
+class AsCons s t u v a b where
+  type AsConsConstraint s t u v a b :: (* -> * -> *) -> (* -> *) -> Constraint
+  type AsConsConstraint s t u v a b = TraversalConstraint 
+
+  _AsCons' :: AsConsConstraint s t u v a b p f => Optic p f s t (a, u) (b, v)
+{-
+  _AsConsIsTraversal :: proxy s t a b -> Dict (AsConsConstraint s t a b :< TraversalConstraint)
+  default _AsConsIsTraversal :: (AsConsConstraint s t a b ~ TraversalConstraint) => proxy s t a b -> Dict (AsConsConstraint s t a b :< TraversalConstraint)
+  _AsConsIsTraversal _ = Dict
+-}
+
+instance AsCons [a] [b] [a] [b] a b where
+  type AsConsConstraint [a] [b] [a] [b] a b = PrismConstraint
+  -- _AsConsIsTraversal _ = Dict
+  _AsCons' =
+    _Cons
+
+data NonEmptyList a = NonEmptyList a [a]
+
+instance AsCons (NonEmptyList a) (NonEmptyList b) [a] [b] a b where
+  type AsConsConstraint (NonEmptyList a) (NonEmptyList b) [a] [b] a b = LensConstraint
+  _AsCons' =
+    lens
+      (\(NonEmptyList h t) -> (h, t))
+      (\_ (h, t) -> NonEmptyList h t)
+      
