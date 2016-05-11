@@ -339,3 +339,6 @@ instance AsArithException ArithException where
 
 instance AsArithException SomeException where
   _AsArithException' = exception
+
+classdd Conz s t a b | s -> a, t -> b, s b -> t, t a -> s where
+  _Conz :: Prism s t (a, s) (b, t)
