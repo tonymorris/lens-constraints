@@ -348,7 +348,6 @@ class AsCons s t u v a b where
 
 instance AsCons [a] [b] [a] [b] a b where
   type AsConsConstraint [a] [b] [a] [b] a b = PrismConstraint
-  -- _AsConsIsTraversal _ = Dict
   _AsCons' =
     _Cons
 
